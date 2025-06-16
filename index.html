@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Tương Tác Yêu Ngân - Mobile Sized</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap');
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    max-width: 428px; /* Approx iPhone 11 Pro Max width in px */
+    margin-left: auto;
+    margin-right: auto;
+    background: #ffc0cb; /* Pink background */
+    overflow: hidden;
+    font-family: 'Comic Neue', cursive, Arial, sans-serif;
+    user-select: none;
+    position: relative;
+    touch-action: manipulation;
+  }
+
+  body {
+    height: 926px; /* Approx iPhone 11 Pro Max height in px */
+  }
+
+  .love-text {
+    position: absolute;
+    color: #87CEEB; /* Sky blue color */
+    font-size: 24px; /* Slightly smaller for mobile */
+    font-weight: 700;
+    pointer-events: none;
+    user-select: text;
+    white-space: nowrap;
+    text-shadow:
+      1px 1px 2px rgba(135, 206, 235, 0.7);
+    opacity: 1;
+    transition: opacity 0.7s ease;
+  }
+
+  .emoji {
+    position: absolute;
+    font-size: 20px; /* Smaller emoji size for mobile */
+    pointer-events: none;
+    user-select: none;
+    opacity: 1;
+    animation: floatDown 3s forwards ease-out;
+  }
+
+  /* Animation: drifting downward and fading */
+  @keyframes floatDown {
+    0% {
+      transform: translateY(0) translateX(0) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(80px) translateX(var(--x-move)) scale(0.7);
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+<body>
+<script>
+  const emojis = ['💕', '🎶', '❤️', '😘', '😍'];
+
+  function createLoveText(x, y) {
+    const loveText = document.createElement('div');
+    loveText.className = 'love-text';
+    loveText.textContent = 'YÊU NGÂN';
+    loveText.style.left = `${x}px`;
+    loveText.style.top = `${y}px`;
+    document.body.appendChild(loveText);
+
+    // Fade out starting at 2.3s, fade duration 0.7s, remove after 3s
+    setTimeout(() => {
+      loveText.style.opacity = '0';
+    }, 2300);
+    setTimeout(() => {
+      loveText.remove();
+    }, 3000);
+
+    return loveText;
+  }
+
+  function createEmoji(x, y) {
+    const emoji = document.createElement('div');
+    emoji.className = 'emoji';
+    const emojiChar = emojis[Math.floor(Math.random() * emojis.length)];
+    emoji.textContent = emojiChar;
+
+    // Position emoji with random offset around x, y
+    const offsetX = (Math.random() - 0.5) * 40; // Reduced range for smaller screen
+    const offsetY = (Math.random() - 0.5) * 15;
+
+    emoji.style.left = `${x + offsetX}px`;
+    emoji.style.top = `${y + offsetY}px`;
+
+    // Custom property for horizontal drift in animation
+    const randomXMove = (Math.random() - 0.5) * 30; // Smaller horizontal drift
+    emoji.style.setProperty('--x-move', `${randomXMove}px`);
+
+    document.body.appendChild(emoji);
+
+    // Remove emoji after animation completes (3s)
+    setTimeout(() => {
+      emoji.remove();
+    }, 3000);
+  }
+
+  function handleClick(event) {
+    // Use touch event if available
+    const x = event.clientX || (event.touches && event.touches[0].clientX);
+    const y = event.clientY || (event.touches && event.touches[0].clientY);
+    if (x == null || y == null) return;
+
+    createLoveText(x, y);
+
+    // Create multiple emojis around the text (6 emojis for mobile)
+    for (let i = 0; i < 6; i++) {
+      createEmoji(x, y);
+    }
+  }
+
+  document.body.addEventListener('click', handleClick);
+  document.body.addEventListener('touchstart', event => {
+    event.preventDefault(); // prevent double trigger and scrolling
+    handleClick(event);
+  }, {passive: false});
+</script>
+</body>
+</html>
+
